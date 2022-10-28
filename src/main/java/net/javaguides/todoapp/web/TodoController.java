@@ -119,7 +119,7 @@ public class TodoController extends HttpServlet {
 		//DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-mm-dd");
 		LocalDate targetDate = LocalDate.parse(request.getParameter("targetDate"));
 		
-		boolean isDone = Boolean.valueOf(request.getParameter("isDone"));
+		boolean isDone = Boolean.parseBoolean(request.getParameter("isDone"));
 		Todo updateTodo = new Todo(id, title, username, description, targetDate, isDone);
 		
 		todoDAO.updateTodo(updateTodo);
