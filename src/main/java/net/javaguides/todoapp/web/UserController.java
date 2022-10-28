@@ -1,6 +1,7 @@
 package net.javaguides.todoapp.web;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -9,8 +10,11 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import net.javaguides.todoapp.dao.UserDao;
+import org.hibernate.Transaction;
 import net.javaguides.todoapp.model.User;
+import net.javaguides.todoapp.utils.HibernateUtil;
+import net.javaguides.todoapp.utils.MD5Util;
+import org.hibernate.Session;
 
 /**
  * @email Ramesh Fadatare
@@ -19,42 +23,51 @@ import net.javaguides.todoapp.model.User;
 @WebServlet("/register")
 public class UserController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private UserDao userDao;
+	Session session;
 
+	Transaction transaction;
+
+	@Override
 	public void init() {
-		userDao = new UserDao();
+		try {
+			session = HibernateUtil.getSessionFactory().openSession();
+			transaction = session.beginTransaction();
+		} catch (Exception exception) {
+			exception.printStackTrace();
+		}
 	}
 
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		register(request, response);
+		try {
+			register(request, response);
+		} catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		response.sendRedirect("register/register.jsp");
 	}
 
-	private void register(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+	private void register(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, NoSuchAlgorithmException {
 		String firstName = request.getParameter("firstName");
 		String lastName = request.getParameter("lastName");
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 
-		User employee = new User();
-		employee.setFirstName(firstName);
-		employee.setLastName(lastName);
-		employee.setUsername(username);
-		employee.setPassword(password);
-
+		User employee = new User(firstName, lastName, username, MD5Util.encrypt(password));
 		try {
-			int result = userDao.registerEmployee(employee);
-			if(result == 1) {
-				request.setAttribute("NOTIFICATION", "User Registered Successfully!");
-			}
+			session.save(employee);
+			transaction.commit();
+			request.setAttribute("NOTIFICATION", "User Registered Successfully!");
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
+			transaction.rollback();
 			e.printStackTrace();
 		}
 

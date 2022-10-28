@@ -104,7 +104,7 @@ public class TodoController extends HttpServlet {
 		/*DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-mm-dd");
 		LocalDate targetDate = LocalDate.parse(request.getParameter("targetDate"),df);*/
 		
-		boolean isDone = Boolean.valueOf(request.getParameter("isDone"));
+		boolean isDone = Boolean.parseBoolean(request.getParameter("isDone"));
 		Todo newTodo = new Todo(title, username, description, LocalDate.now(), isDone);
 		todoDAO.insertTodo(newTodo);
 		response.sendRedirect("list");

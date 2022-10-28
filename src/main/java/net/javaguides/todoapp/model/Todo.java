@@ -1,5 +1,7 @@
 package net.javaguides.todoapp.model;
 
+import javax.persistence.*;
+
 import java.time.LocalDate;
 
 
@@ -9,13 +11,28 @@ import java.time.LocalDate;
  * @author Ramesh Fadatare
  *
  */
+@Entity
+@Table(name = "todos")
 public class Todo {
 
+	@Id
+	@Column(name="id", nullable=false, unique=true)
+	@GeneratedValue(strategy= GenerationType.IDENTITY)
 	private Long id;
+
+	@Column(name="title")
 	private String title;
+
+	@Column(name="username")
 	private String username;
+
+	@Column(name="description")
 	private String description;
+
+	@Column(name="target_date")
 	private LocalDate targetDate;
+
+	@Column(name="is_done")
 	private boolean status;
 	
 	protected Todo() {
