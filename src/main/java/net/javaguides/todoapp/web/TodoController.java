@@ -28,15 +28,18 @@ public class TodoController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private TodoDao todoDAO;
 
+	@Override
 	public void init() {
 		todoDAO = new TodoDaoImpl();
 	}
 
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		doGet(request, response);
 	}
 
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String action = request.getServletPath();
@@ -116,14 +119,10 @@ public class TodoController extends HttpServlet {
 		String title = request.getParameter("title");
 		String username = request.getParameter("username");
 		String description = request.getParameter("description");
-		//DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-mm-dd");
 		LocalDate targetDate = LocalDate.parse(request.getParameter("targetDate"));
-		
 		boolean isDone = Boolean.parseBoolean(request.getParameter("isDone"));
 		Todo updateTodo = new Todo(id, title, username, description, targetDate, isDone);
-		
 		todoDAO.updateTodo(updateTodo);
-		
 		response.sendRedirect("list");
 	}
 
