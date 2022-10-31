@@ -2,6 +2,7 @@ package net.javaguides.todoapp.dao;
 
 import net.javaguides.todoapp.model.Todo;
 import net.javaguides.todoapp.utils.HibernateUtil;
+import net.javaguides.todoapp.utils.HibernateXmlUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -20,12 +21,12 @@ import java.util.List;
 public class TodoDaoImpl implements TodoDao {
 
     private final Session session;
-    private final Transaction transaction;
+    private Transaction transaction;
 
     private final CriteriaBuilder builder;
 
     public TodoDaoImpl() {
-        session = HibernateUtil.getSessionFactory().openSession();
+        session = HibernateXmlUtil.getSessionFactory().openSession();
         transaction = session.beginTransaction();
         builder = session.getCriteriaBuilder();
 
@@ -34,6 +35,8 @@ public class TodoDaoImpl implements TodoDao {
     @Override
     public void insertTodo(Todo todo) {
         session.save(todo);
+        if (!transaction.isActive())
+            transaction = session.beginTransaction();
         transaction.commit();
     }
 
@@ -58,6 +61,9 @@ public class TodoDaoImpl implements TodoDao {
         Todo todo = this.selectTodo(id);
         if (todo != null) {
             session.delete(todo);
+            if (!transaction.isActive())
+                transaction = session.beginTransaction();
+            transaction.commit();
             return true;
         }
         return false;
@@ -68,6 +74,9 @@ public class TodoDaoImpl implements TodoDao {
         Todo temp = this.selectTodo(todo.getId());
         if (temp != null) {
             session.merge(todo);
+            if (!transaction.isActive())
+                transaction = session.beginTransaction();
+            transaction.commit();
             return true;
         }
         return false;

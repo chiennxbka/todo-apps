@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import net.javaguides.todoapp.utils.HibernateXmlUtil;
 import org.hibernate.Transaction;
 import net.javaguides.todoapp.model.User;
 import net.javaguides.todoapp.utils.HibernateUtil;
@@ -30,7 +31,7 @@ public class UserController extends HttpServlet {
 	@Override
 	public void init() {
 		try {
-			session = HibernateUtil.getSessionFactory().openSession();
+			session = HibernateXmlUtil.getSessionFactory().openSession();
 			transaction = session.beginTransaction();
 		} catch (Exception exception) {
 			exception.printStackTrace();

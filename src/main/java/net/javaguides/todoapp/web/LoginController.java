@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import net.javaguides.todoapp.model.LoginBean;
 import net.javaguides.todoapp.model.User;
 import net.javaguides.todoapp.utils.HibernateUtil;
+import net.javaguides.todoapp.utils.HibernateXmlUtil;
 import net.javaguides.todoapp.utils.MD5Util;
 import org.hibernate.Session;
 
@@ -31,7 +32,7 @@ public class LoginController extends HttpServlet {
     @Override
     public void init() {
         try {
-            session = HibernateUtil.getSessionFactory().openSession();
+            session = HibernateXmlUtil.getSessionFactory().openSession();
         } catch (Exception exception) {
             exception.printStackTrace();
         }
